@@ -60,7 +60,7 @@ export default function Onboarding() {
                     title: p.title, tech: p.tech, url: p.url,
                 })),
             };
-            await fetch('http://localhost:8000/api/profile/onboarding/', {
+            await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/profile/onboarding/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

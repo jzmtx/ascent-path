@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Search, Upload, TrendingUp, ArrowRight, Briefcase, Loader2 } from 'lucide-react'
 
-const API = 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const DEMAND_COLOR = {
     high: 'text-green-400 bg-green-500/10 border-green-500/30',
