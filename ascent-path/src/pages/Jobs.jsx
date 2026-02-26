@@ -55,7 +55,7 @@ export default function Jobs() {
                 <h1 className="text-5xl font-black text-white mb-3">
                     Job <span className="text-orange-400">Recommendations</span>
                 </h1>
-                <p className="text-slate-500">Matched to your verified skill profile — Alex Chen, 78% readiness</p>
+                <p className="text-slate-500">Matched to your verified skill profile — Netrika, 78% readiness</p>
             </motion.div>
 
             {/* Readiness Banner */}
