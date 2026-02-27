@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Zap, Github, ArrowRight, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
+import { useRef, useEffect } from 'react';
+
 // Animated floating node for background
 function FloatingNode({ x, y, delay, size = 6 }) {
     return (
@@ -86,6 +88,119 @@ const fadeUp = {
     show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
+const InteractiveBackground = () => {
+    const canvasRef = useRef(null)
+
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const ctx = canvas.getContext('2d')
+        let animationFrameId
+        let mouse = { x: undefined, y: undefined, radius: 250 }
+
+        const resize = () => {
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+        }
+        window.addEventListener('resize', resize)
+        resize()
+
+        const mouseMove = (e) => {
+            mouse.x = e.clientX
+            mouse.y = e.clientY
+        }
+        window.addEventListener('mousemove', mouseMove)
+
+        const mouseOut = () => {
+            mouse.x = undefined
+            mouse.y = undefined
+        }
+        window.addEventListener('mouseout', mouseOut)
+
+        // Digital rain / flowing grid effect
+        const gridSize = 40
+        let time = 0
+
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            time += 0.05
+
+            const cols = Math.floor(canvas.width / gridSize) + 1
+            const rows = Math.floor(canvas.height / gridSize) + 1
+
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    const x = i * gridSize
+                    const y = j * gridSize
+
+                    // Calculate distance to mouse
+                    let dx = mouse.x - x
+                    let dy = mouse.y - y
+                    let distance = Math.sqrt(dx * dx + dy * dy)
+
+                    // Base opacity wave
+                    let wave = Math.sin((i * 0.1) + (j * 0.1) - time) * 0.5 + 0.5
+                    let baseOpacity = 0.03 + (wave * 0.05)
+
+                    // Mouse interaction glow
+                    let mouseGlow = 0
+                    if (mouse.x !== undefined && distance < mouse.radius) {
+                        mouseGlow = (1 - (distance / mouse.radius)) * 0.4
+                    }
+
+                    ctx.beginPath()
+                    ctx.arc(x, y, 2, 0, Math.PI * 2)
+
+                    // Color based on position (Orange to Blue gradient effect)
+                    const isOrange = (i + j) % 3 === 0
+                    const r = isOrange ? 249 : 37
+                    const g = isOrange ? 115 : 99
+                    const b = isOrange ? 22 : 235
+
+                    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${baseOpacity + mouseGlow})`
+                    ctx.fill()
+
+                    // Draw lines to right and bottom neighbors if near mouse
+                    if (mouseGlow > 0.1) {
+                        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${mouseGlow * 0.5})`
+                        ctx.lineWidth = 1
+
+                        // Right neighbor
+                        ctx.beginPath()
+                        ctx.moveTo(x, y)
+                        ctx.lineTo(x + gridSize, y)
+                        ctx.stroke()
+
+                        // Bottom neighbor
+                        ctx.beginPath()
+                        ctx.moveTo(x, y)
+                        ctx.lineTo(x, y + gridSize)
+                        ctx.stroke()
+                    }
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(animate)
+        }
+
+        animate()
+
+        return () => {
+            cancelAnimationFrame(animationFrameId)
+            window.removeEventListener('resize', resize)
+            window.removeEventListener('mousemove', mouseMove)
+            window.removeEventListener('mouseout', mouseOut)
+        }
+    }, [])
+
+    return (
+        <canvas
+            ref={canvasRef}
+            className="absolute top-0 left-0 w-full h-full pointer-events-none z-0"
+        />
+    )
+}
+
 export default function SignIn() {
     const [form, setForm] = useState({ email: '', password: '', remember: false });
     const [showPass, setShowPass] = useState(false);
@@ -127,6 +242,7 @@ export default function SignIn() {
 
             <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center relative overflow-hidden px-4">
                 {/* Animated background */}
+                <InteractiveBackground />
                 <div className="absolute inset-0 pointer-events-none">
                     {/* Radial glow */}
                     <motion.div
@@ -135,16 +251,6 @@ export default function SignIn() {
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-orange-500 blur-[120px]"
                     />
                     <div className="absolute top-1/4 right-1/3 w-[300px] h-[300px] rounded-full bg-blue-600/5 blur-[80px]" />
-                    {/* Grid */}
-                    <div className="absolute inset-0 opacity-[0.03]" style={{
-                        backgroundImage: 'linear-gradient(rgba(249,115,22,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,0.5) 1px,transparent 1px)',
-                        backgroundSize: '60px 60px',
-                    }} />
-                    {/* Floating nodes */}
-                    {NODES.map((n, i) => <FloatingNode key={i} {...n} />)}
-                    <ConnectorLine x1={10} y1={20} x2={50} y2={10} delay={0} />
-                    <ConnectorLine x1={50} y1={10} x2={85} y2={15} delay={1} />
-                    <ConnectorLine x1={85} y1={15} x2={90} y2={50} delay={0.5} />
                 </div>
 
                 <motion.div
