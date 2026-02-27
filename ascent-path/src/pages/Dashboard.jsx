@@ -5,7 +5,7 @@ import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'rec
 import { Flame, Target, Zap, Clock, TrendingUp, BadgeCheck, Mic, Loader2, ArrowRight } from 'lucide-react'
 import InterviewModal from '../components/InterviewModal'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL || 'https://ascent-path-api.onrender.com'
 
 const velocityData = [
     { week: 'W1', score: 20 }, { week: 'W2', score: 35 }, { week: 'W3', score: 28 },
