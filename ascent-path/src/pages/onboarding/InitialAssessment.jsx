@@ -8,7 +8,8 @@ const API = import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com';
 export default function InitialAssessment() {
     const navigate = useNavigate();
     const onboarding = JSON.parse(localStorage.getItem('onboarding') || '{}');
-    const skill = (onboarding.selectedSkills || ['JavaScript'])[0];
+    const skillList = onboarding.selectedSkills || ['JavaScript'];
+    const skill = skillList.join(', ');
     const level = (onboarding.level || 'Beginner').toLowerCase();
     const token = localStorage.getItem('access_token');
 

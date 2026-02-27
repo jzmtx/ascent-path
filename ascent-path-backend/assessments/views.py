@@ -26,8 +26,11 @@ def generate_questions_via_groq(skill: str, level: str, count: int = 5) -> list:
     client = get_groq_client()
 
     prompt = f"""Generate exactly {count} multiple-choice questions for a developer skill assessment.
-Skill: {skill}
+Skill/Topic(s): {skill}
 Level: {level}
+
+If multiple skills are provided, you MUST distribute the {count} questions evenly across all the listed skills. 
+You MUST return exactly {count} questions total, no more, no less!
 
 Return ONLY a valid JSON array (no markdown, no extra text) in this exact format:
 [
