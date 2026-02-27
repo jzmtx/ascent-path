@@ -17,7 +17,7 @@ function ChatBubble({ msg, isNew }) {
             className={`flex gap-3 ${isAI ? 'justify-start' : 'justify-end'}`}
         >
             {isAI && (
-                <img src={ALEX_AVATAR} alt="Alex" className="w-8 h-8 rounded-full flex-shrink-0 mt-1 border border-orange-500/30" />
+                <img src={NETRIKA_AVATAR} alt="Netrika" className="w-8 h-8 rounded-full flex-shrink-0 mt-1 border border-orange-500/30" />
             )}
             <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isAI
                 ? 'bg-white/[0.07] border border-white/10 text-slate-200 rounded-tl-none'
