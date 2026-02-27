@@ -10,7 +10,7 @@ import Editor from '@monaco-editor/react'
 import InterviewModal from '../components/InterviewModal'
 import NodeAssessment from '../components/NodeAssessment'
 
-const API = import.meta.env.VITE_API_URL || 'https://ascent-path-api.onrender.com'
+const API = import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com'
 
 const DIFF_COLORS = {
     beginner: 'text-blue-400 border-blue-500/30 bg-blue-500/10',

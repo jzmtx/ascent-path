@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Timer, AlertTriangle, CheckCircle2, Zap } from 'lucide-react';
 import TabWarningModal from '../../components/TabWarningModal';
 
-const API = import.meta.env.VITE_API_URL || 'https://ascent-path-api.onrender.com';
+const API = import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com';
 
 export default function InitialAssessment() {
     const navigate = useNavigate();

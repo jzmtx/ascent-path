@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API = import.meta.env.VITE_API_URL || 'https://ascent-path-api.onrender.com'
+const API = import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com'
 
 const axiosInstance = axios.create({
     baseURL: API,

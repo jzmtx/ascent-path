@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Timer, AlertTriangle, CheckCircle2, Zap, X } from 'lucide-react'
 import TabWarningModal from './TabWarningModal'
 
-const API = import.meta.env.VITE_API_URL || 'https://ascent-path-api.onrender.com'
+const API = import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com'
 
 export default function NodeAssessment({ skill, level = 'beginner', onClose, onPassed }) {
     const token = localStorage.getItem('access_token')

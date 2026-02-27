@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { Download, Share2, CheckCircle, Lock, ExternalLink, TrendingUp, Loader2, MapPin, Target, Sparkles } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || 'https://ascent-path-api.onrender.com'
+const API = import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com'
 
 const levelColor = {
     Advanced: 'text-blue-400 bg-blue-500/15 border-blue-500/30',

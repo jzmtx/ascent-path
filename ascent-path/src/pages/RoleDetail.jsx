@@ -6,7 +6,7 @@ import {
     ChevronRight, ArrowLeft, Loader2, MapPin, Lock
 } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || 'https://ascent-path-api.onrender.com'
+const API = import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com'
 
 const DEMAND_BADGE = {
     high: 'text-green-400 bg-green-500/10 border-green-500/30',

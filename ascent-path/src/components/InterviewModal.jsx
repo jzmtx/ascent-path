@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, CheckCircle2, Github, Loader2, BadgeCheck } from 'lucide-react'
 
-const API = import.meta.env.VITE_API_URL || 'https://ascent-path-api.onrender.com'
+const API = import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com'
 
 // Netrika's avatar — a professional online avatar placeholder using UI Avatars
 const NETRIKA_AVATAR = "https://ui-avatars.com/api/?name=Netrika&background=f97316&color=fff&size=128&font-size=0.4&bold=true&format=png"
