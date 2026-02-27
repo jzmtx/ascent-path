@@ -106,7 +106,7 @@ export default function SignIn() {
             const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://ascent-path.onrender.com'}/api/auth/login/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: form.email, password: form.password }),
+                body: JSON.stringify({ username: form.email, password: form.password }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || Object.values(data).flat().join(' '));
