@@ -17,16 +17,163 @@ const stats = [
     { value: '94%', label: 'Job Readiness Accuracy' },
 ]
 
+const ParticleBackground = () => {
+    const canvasRef = useRef(null)
+
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const ctx = canvas.getContext('2d')
+        let animationFrameId
+        let particles = []
+        let mouse = { x: undefined, y: undefined, radius: 150 }
+
+        const resize = () => {
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+        }
+        window.addEventListener('resize', resize)
+        resize()
+
+        const mouseMove = (e) => {
+            const rect = canvas.getBoundingClientRect()
+            mouse.x = e.clientX - rect.left
+            mouse.y = e.clientY - rect.top
+        }
+        window.addEventListener('mousemove', mouseMove)
+
+        const mouseOut = () => {
+            mouse.x = undefined
+            mouse.y = undefined
+        }
+        window.addEventListener('mouseout', mouseOut)
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width
+                this.y = Math.random() * canvas.height
+                this.size = Math.random() * 2 + 0.5
+                this.vx = (Math.random() - 0.5) * 1.2
+                this.vy = (Math.random() - 0.5) * 1.2
+                // Mix of Asscent Path brand colors (Orange and Blue)
+                this.color = Math.random() > 0.5 ? 'rgba(249, 115, 22, 0.8)' : 'rgba(37, 99, 235, 0.8)'
+            }
+            draw() {
+                ctx.fillStyle = this.color
+                ctx.beginPath()
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+                ctx.closePath()
+                ctx.fill()
+            }
+            update() {
+                this.x += this.vx
+                this.y += this.vy
+
+                if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx
+                if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy
+
+                // Interactive push away from mouse
+                if (mouse.x !== undefined && mouse.y !== undefined) {
+                    let dx = mouse.x - this.x
+                    let dy = mouse.y - this.y
+                    let distance = Math.sqrt(dx * dx + dy * dy)
+                    if (distance < mouse.radius) {
+                        const forceDirectionX = dx / distance
+                        const forceDirectionY = dy / distance
+                        const force = (mouse.radius - distance) / mouse.radius
+                        this.x -= forceDirectionX * force * 2.5
+                        this.y -= forceDirectionY * force * 2.5
+                    }
+                }
+                this.draw()
+            }
+        }
+
+        const init = () => {
+            particles = []
+            let numberOfParticles = (canvas.height * canvas.width) / 10000
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle())
+            }
+        }
+
+        const connect = () => {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x
+                    let dy = particles[a].y - particles[b].y
+                    let distance = dx * dx + dy * dy
+
+                    // Connect particles to each other
+                    if (distance < 15000) {
+                        let opacity = 1 - (distance / 15000)
+                        ctx.strokeStyle = `rgba(150, 150, 150, ${opacity * 0.15})`
+                        ctx.lineWidth = 1
+                        ctx.beginPath()
+                        ctx.moveTo(particles[a].x, particles[a].y)
+                        ctx.lineTo(particles[b].x, particles[b].y)
+                        ctx.stroke()
+                    }
+                }
+
+                // Connect particles to mouse with glowing orange line
+                if (mouse.x !== undefined && mouse.y !== undefined) {
+                    let dx = particles[a].x - mouse.x
+                    let dy = particles[a].y - mouse.y
+                    let distance = dx * dx + dy * dy
+                    if (distance < 25000) {
+                        let opacity = 1 - (distance / 25000)
+                        ctx.strokeStyle = `rgba(249, 115, 22, ${opacity * 0.4})`
+                        ctx.lineWidth = 1.2
+                        ctx.beginPath()
+                        ctx.moveTo(particles[a].x, particles[a].y)
+                        ctx.lineTo(mouse.x, mouse.y)
+                        ctx.stroke()
+                    }
+                }
+            }
+        }
+
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update()
+            }
+            connect()
+            animationFrameId = requestAnimationFrame(animate)
+        }
+
+        init()
+        animate()
+
+        return () => {
+            cancelAnimationFrame(animationFrameId)
+            window.removeEventListener('resize', resize)
+            window.removeEventListener('mousemove', mouseMove)
+            window.removeEventListener('mouseout', mouseOut)
+        }
+    }, [])
+
+    return (
+        <canvas
+            ref={canvasRef}
+            className="absolute top-0 left-0 w-full h-full pointer-events-none z-0"
+            style={{ opacity: 0.6 }}
+        />
+    )
+}
+
 export default function HomePage() {
     return (
         <div className="pt-16">
             {/* Hero */}
             <section className="relative min-h-screen flex items-center overflow-hidden orange-grid-bg">
+                <ParticleBackground />
                 {/* Glow orbs */}
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
-                <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-orange-500/10 blur-3xl pointer-events-none z-0" />
+                <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-blue-600/10 blur-3xl pointer-events-none z-0" />
 
-                <div className="max-w-7xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div className="max-w-7xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
                     {/* Left */}
                     <motion.div
                         initial={{ opacity: 0, x: -40 }}
