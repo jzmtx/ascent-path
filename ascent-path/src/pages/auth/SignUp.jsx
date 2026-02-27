@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Zap, Github, CheckCircle2, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-/* ── Animated background node ─────────────────────────────────── */
+import { useRef, useEffect } from 'react';
+
+/* ── Animated background node (used occasionally dynamically) ─────────────────────────────────── */
 function FloatingNode({ x, y, delay, size = 6, color = 'orange' }) {
     const colors = {
         orange: 'border-orange-500/30 bg-orange-500/10',
@@ -119,16 +121,73 @@ function getPasswordStrength(pw) {
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 
-/* ── Background node positions ── */
-const BG_NODES = [
-    { x: 5, y: 15, delay: 0, size: 8, color: 'orange' },
-    { x: 95, y: 10, delay: 1, size: 6, color: 'blue' },
-    { x: 8, y: 60, delay: 0.5, size: 10, color: 'blue' },
-    { x: 92, y: 65, delay: 1.5, size: 7, color: 'orange' },
-    { x: 50, y: 5, delay: 0.8, size: 5, color: 'orange' },
-    { x: 20, y: 90, delay: 0.3, size: 9, color: 'blue' },
-    { x: 80, y: 88, delay: 1.2, size: 6, color: 'orange' },
-];
+const AmbientStars = () => {
+    const canvasRef = useRef(null)
+
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const ctx = canvas.getContext('2d')
+        let animationFrameId
+
+        const resize = () => {
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+        }
+        window.addEventListener('resize', resize)
+        resize()
+
+        const stars = Array.from({ length: 150 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 1.5 + 0.2,
+            baseAlpha: Math.random() * 0.4 + 0.1,
+            phase: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.02 + 0.005,
+            color: Math.random() > 0.6 ? '249, 115, 22' : '37, 99, 235' // Orange or Blue bias
+        }))
+
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            stars.forEach(star => {
+                star.phase += star.speed
+                // Twinkle effect using sine wave
+                const alpha = star.baseAlpha + Math.sin(star.phase) * 0.3
+                const clampedAlpha = Math.max(0, Math.min(1, alpha))
+
+                ctx.beginPath()
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2)
+                ctx.fillStyle = `rgba(${star.color}, ${clampedAlpha})`
+                ctx.fill()
+
+                // Very slow, elegant upward drift
+                star.y -= star.speed * 8
+                if (star.y < 0) {
+                    star.y = canvas.height
+                    star.x = Math.random() * canvas.width
+                }
+            })
+
+            animationFrameId = requestAnimationFrame(animate)
+        }
+
+        animate()
+
+        return () => {
+            cancelAnimationFrame(animationFrameId)
+            window.removeEventListener('resize', resize)
+        }
+    }, [])
+
+    return (
+        <canvas
+            ref={canvasRef}
+            className="absolute top-0 left-0 w-full h-full pointer-events-none z-0"
+            style={{ opacity: 0.8 }}
+        />
+    )
+}
 
 /* ══════════════════════════════════════════════════════════════ */
 export default function SignUp() {
@@ -187,6 +246,7 @@ export default function SignUp() {
             <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center relative overflow-hidden px-4 py-12">
                 {/* Animated background */}
                 <div className="absolute inset-0 pointer-events-none">
+                    <AmbientStars />
                     <motion.div
                         animate={{ scale: [1, 1.15, 1], opacity: [0.04, 0.09, 0.04] }}
                         transition={{ duration: 5, repeat: Infinity }}
@@ -197,11 +257,6 @@ export default function SignUp() {
                         transition={{ duration: 6, repeat: Infinity, delay: 1 }}
                         className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] rounded-full bg-blue-600 blur-[100px]"
                     />
-                    <div className="absolute inset-0 opacity-[0.025]" style={{
-                        backgroundImage: 'linear-gradient(rgba(249,115,22,0.5)1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,0.5)1px,transparent 1px)',
-                        backgroundSize: '60px 60px',
-                    }} />
-                    {BG_NODES.map((n, i) => <FloatingNode key={i} {...n} />)}
                 </div>
 
                 <div className="w-full max-w-5xl relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-10 items-center">
