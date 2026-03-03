@@ -274,7 +274,7 @@ export default function Dashboard() {
                                 <Zap size={16} className="text-blue-400" /> Learning Velocity
                             </h3>
                             <div className="h-48 mt-4">
-                                <ResponsiveContainer width="100%" height="100%">
+                                <ResponsiveContainer width="99%" height="100%" minWidth={1} minHeight={1}>
                                     <AreaChart data={velocityData}>
                                         <defs>
                                             <linearGradient id="velGrad" x1="0" y1="0" x2="0" y2="1">
