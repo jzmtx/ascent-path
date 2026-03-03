@@ -83,6 +83,11 @@ else:
             ssl_require=True,
         )
     }
+    # Configure exact settings for Supabase PgBouncer (Transaction mode)
+    DATABASES['default']['OPTIONS'] = {
+        'options': '-c statement_timeout=300000'
+    }
+    DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
